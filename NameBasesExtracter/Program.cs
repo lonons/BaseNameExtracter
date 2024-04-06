@@ -24,15 +24,15 @@ internal class Program
 
         ExcelWorker excelWorker = new ExcelWorker();
 
-        Console.Write("Преобразование данных ...");
-        foreach ( string s in strings )
+        Console.WriteLine("Преобразование данных ...");
+        foreach (string s in strings)
         {
             if (s.StartsWith('['))
             {
-                name = s.Substring(s.IndexOf('[') + 1, s.IndexOf(']') - s.IndexOf('[')-1);
+                name = s.Substring(s.IndexOf('[') + 1, s.LastIndexOf(']') - s.IndexOf('[') - 1);
                 isFolder = true;
             }
-               
+
             if (s.StartsWith("Connect"))
             {
                 var firstIndex = 0;
@@ -48,11 +48,11 @@ internal class Program
                         mySrvr = "Local";
 
                     firstIndex = temp.IndexOf('"') + 1;
-                    secondIndex = temp.IndexOf(';',firstIndex) -1;
-                   
-                    myRef = temp.Substring(firstIndex,secondIndex-firstIndex);
+                    secondIndex = temp.IndexOf(';', firstIndex) - 1;
+
+                    myRef = temp.Substring(firstIndex, secondIndex - firstIndex);
                 }
-                
+
                 if (temp.StartsWith("Srvr"))
                 {
                     firstIndex = temp.IndexOf('"') + 1;
@@ -66,14 +66,14 @@ internal class Program
                     myRef = temp.Substring(firstIndex, secondIndex - firstIndex);
                 }
 
-                
+
 
                 isFolder = false;
             }
-                if (isFolder == false)
+            if (isFolder == false)
             {
                 Console.WriteLine($"{name} - {mySrvr} - {myRef}");
-                excelWorker.WriteOnCell(name,mySrvr,myRef);
+                excelWorker.WriteOnCell(name, mySrvr, myRef);
                 counter++;
                 isFolder = true;
             }
@@ -97,12 +97,12 @@ internal class Program
             sheet = newWorkBook.Worksheets[0];
             WriteOnCell("Название 1С базы", "Сервер", "Ссылка на базу");
         }
-        
-        public void WriteOnCell(string Name,string Server,string Ref)
+
+        public void WriteOnCell(string Name, string Server, string Ref)
         {
-            sheet.Range[rowCounter, 1].Value = Ref;
-            sheet.Range[rowCounter, 2].Value = Name;
-            sheet.Range[rowCounter, 3].Value = Server;
+            sheet.Range[rowCounter, 1].Value = Name;
+            sheet.Range[rowCounter, 2].Value = Server;
+            sheet.Range[rowCounter, 3].Value = Ref;
             rowCounter++;
         }
         public void SaveFile()
@@ -113,7 +113,15 @@ internal class Program
             style.Font.IsBold = true;
             sheet.Range[1, 1, 1, 4].Style = style;
 
-            newWorkBook.SaveToFile("1C_basesList.xlsx", ExcelVersion.Version2016);
+            string curFile = @"1C_basesLists\1C_basesList";
+            if (File.Exists(curFile + ".xlsx"))
+            {
+                int i = 0;
+
+                while (File.Exists(curFile + i + ".xlsx")) i++;
+                newWorkBook.SaveToFile(curFile + i + ".xlsx", ExcelVersion.Version2016);
+            }
+            else newWorkBook.SaveToFile(curFile + ".xlsx", ExcelVersion.Version2016);
         }
     }
 }
