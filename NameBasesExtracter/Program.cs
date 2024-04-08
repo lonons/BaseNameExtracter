@@ -27,10 +27,15 @@ internal class Program
                 }
 
                 string other = Console.ReadLine();
-                if (other == "")
+                int t;
+                bool result = Int32.TryParse(other, out t);
+                if (!result)
+                {
                     goto m;
+                }
                 int id = Convert.ToInt32(other) - 1;
-                
+                if(id >= bases.Count)
+                    goto m;
                 path = bases[id];
                 excelWorker.ReadFile(path);
                 break;
@@ -44,86 +49,9 @@ internal class Program
                 }
                 excelWorker.ReadFile(path);
                 break;
-            default: Console.WriteLine("Неверная операция"); break;
+            default: Console.WriteLine("Неверная операция"); goto m;
         }
             
-        /*Console.Clear();
-
-        string fileName = Path.GetFileName(path);
-        if (!File.Exists(@"bases\" + fileName))
-            File.Copy(path, @"bases\" + fileName, true);
-
-        var strings = File.ReadAllLines($"{path}");
-        Console.WriteLine("Чтение файла ...");
-        bool isFolder = false;
-
-        string name = "";
-        string myRef = "";
-        string mySrvr = "";
-        int counter = 0;
-
-        ExcelWorker excelWorker = new ExcelWorker();
-
-        Console.WriteLine("Преобразование данных ...");
-        foreach (string s in strings)
-        {
-            if (s.StartsWith('['))
-            {
-                name = s.Substring(s.IndexOf('[') + 1, s.LastIndexOf(']') - s.IndexOf('[') - 1);
-                isFolder = true;
-            }
-
-            if (s.StartsWith("Connect"))
-            {
-                var firstIndex = 0;
-                var secondIndex = 0;
-                mySrvr = "ERROR";
-                myRef = "ERROR";
-                var temp = s.Remove(0, 8);
-                if (temp.StartsWith("Ws") || temp.StartsWith("File"))
-                {
-                    if (temp.StartsWith("Ws"))
-                        mySrvr = "Web";
-                    if (temp.StartsWith("File"))
-                        mySrvr = "Local";
-
-                    firstIndex = temp.IndexOf('"') + 1;
-                    secondIndex = temp.IndexOf(';', firstIndex) - 1;
-
-                    myRef = temp.Substring(firstIndex, secondIndex - firstIndex);
-                }
-
-                if (temp.StartsWith("Srvr"))
-                {
-                    firstIndex = temp.IndexOf('"') + 1;
-                    secondIndex = temp.IndexOf(';', firstIndex) - 1;
-
-                    mySrvr = temp.Substring(firstIndex, secondIndex - firstIndex);
-
-                    firstIndex = secondIndex + 7;
-                    secondIndex = temp.IndexOf(';', firstIndex) - 1;
-
-                    myRef = temp.Substring(firstIndex, secondIndex - firstIndex);
-                }
-
-
-
-                isFolder = false;
-            }
-            if (isFolder == false)
-            {
-                Console.WriteLine($"{name} - {mySrvr} - {myRef}");
-                excelWorker.WriteOnCell(name, mySrvr, myRef);
-                counter++;
-                isFolder = true;
-            }
-        }
-        Console.WriteLine($"Всего баз - {counter}");
-        Console.Write("Сохранение данных в Excel ... ");
-        excelWorker.SaveFile();
-        Console.WriteLine("DONE");
-        Console.WriteLine("Для закрытия окна нажимете Enter");
-        Console.ReadLine();*/
     }
 
     private class BasesList
