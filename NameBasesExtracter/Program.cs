@@ -4,15 +4,32 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        string[] SearchPatterns = new string[4] { "*.txt", "*.v8i", "*.doc", "*.docx" };
+        string InitialPath = @"bases\";
+        List<string> bases = new List<string>();
+        int count = 0;
+
+        foreach (string FilePath in SearchPatterns.AsParallel().SelectMany(SearchPattern => Directory.EnumerateFiles(InitialPath, SearchPattern, SearchOption.AllDirectories)))
+        {
+            bases.Add(FilePath);
+            Console.WriteLine(count + " - " + FilePath);
+            count++;
+        }
+        
         string path = "";
         while (true)
         {
-            Console.Write("Введите путь до txt файла : ");
+            Console.Write("Введите полный (или указаный) путь до txt файла: ");
             path = Console.ReadLine();
             if (!File.Exists(path)) Console.WriteLine("Неверный путь");
             else break;
         }
         Console.Clear();
+
+        string fileName = Path.GetFileName(path);
+        if (!File.Exists(@"bases\" + fileName))
+            File.Copy(path, @"bases\" + fileName, true);
+
         var strings = File.ReadAllLines($"{path}");
         Console.WriteLine("Чтение файла ...");
         bool isFolder = false;
